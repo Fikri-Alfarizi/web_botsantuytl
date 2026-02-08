@@ -1,12 +1,31 @@
 #!/bin/bash
+set -e
 
-# Clear and cache config
+echo "=== Starting Laravel Application ==="
+
+# Create storage directories if not exist
+mkdir -p storage/framework/{cache/data,sessions,views}
+mkdir -p storage/logs
+mkdir -p bootstrap/cache
+chmod -R 777 storage bootstrap/cache
+
+# Create SQLite database if not exists
+if [ ! -f database/database.sqlite ]; then
+    echo "Creating SQLite database..."
+    touch database/database.sqlite
+fi
+chmod 777 database/database.sqlite
+
+# Clear caches
+echo "Clearing caches..."
 php artisan config:clear
 php artisan cache:clear
 php artisan view:clear
+php artisan route:clear
 
-# Run migrations if needed (ignore errors for now)
-php artisan migrate --force 2>/dev/null || true
+# Run migrations
+echo "Running migrations..."
+php artisan migrate --force
 
-# Start server
+echo "=== Starting Server on port ${PORT:-8080} ==="
 exec php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
