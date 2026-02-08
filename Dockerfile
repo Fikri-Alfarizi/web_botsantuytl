@@ -19,16 +19,12 @@ COPY . .
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-# Create storage directories and set permissions
-RUN mkdir -p storage/framework/cache/data \
-    && mkdir -p storage/framework/sessions \
-    && mkdir -p storage/framework/views \
+# Create directories (but NOT the sqlite file - that's done at runtime)
+RUN mkdir -p storage/framework/{cache/data,sessions,views} \
     && mkdir -p storage/logs \
     && mkdir -p bootstrap/cache \
-    && chmod -R 777 storage bootstrap/cache
-
-# Create SQLite database file
-RUN touch database/database.sqlite && chmod 777 database/database.sqlite
+    && mkdir -p database \
+    && chmod -R 777 storage bootstrap/cache database
 
 # Copy startup script
 COPY docker-entrypoint.sh /docker-entrypoint.sh

@@ -3,27 +3,26 @@ set -e
 
 echo "=== Starting Laravel Application ==="
 
-# Create storage directories if not exist
+# Create storage directories
 mkdir -p storage/framework/{cache/data,sessions,views}
 mkdir -p storage/logs
 mkdir -p bootstrap/cache
 chmod -R 777 storage bootstrap/cache
 
-# Create SQLite database if not exists
-if [ ! -f database/database.sqlite ]; then
-    echo "Creating SQLite database..."
-    touch database/database.sqlite
-fi
+# IMPORTANT: Delete old SQLite database and create fresh one
+echo "Creating fresh SQLite database..."
+rm -f database/database.sqlite
+touch database/database.sqlite
 chmod 777 database/database.sqlite
 
-# Clear caches
+# Clear all caches
 echo "Clearing caches..."
 php artisan config:clear
 php artisan cache:clear
 php artisan view:clear
 php artisan route:clear
 
-# Run migrations
+# Run ALL migrations fresh (since we deleted the db)
 echo "Running migrations..."
 php artisan migrate --force
 
