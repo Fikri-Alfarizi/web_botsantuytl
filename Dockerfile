@@ -19,8 +19,19 @@ COPY . .
 # Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-# Set permissions
-RUN chmod -R 775 storage bootstrap/cache
+# Create storage directories and set permissions
+RUN mkdir -p storage/framework/cache/data \
+    && mkdir -p storage/framework/sessions \
+    && mkdir -p storage/framework/views \
+    && mkdir -p storage/logs \
+    && mkdir -p bootstrap/cache \
+    && chmod -R 777 storage bootstrap/cache
 
-# Use PHP built-in server (simpler and works everywhere)
-CMD php artisan serve --host=0.0.0.0 --port=${PORT:-8080}
+# Create SQLite database file
+RUN touch database/database.sqlite && chmod 777 database/database.sqlite
+
+# Copy startup script
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+
+ENTRYPOINT ["/docker-entrypoint.sh"]
