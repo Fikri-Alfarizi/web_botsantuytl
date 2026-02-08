@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: santuytl-dashboard
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: APP_KEY
+        generateValue: true
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: DISCORD_CLIENT_ID
+        sync: false
+      - key: DISCORD_CLIENT_SECRET
+        sync: false
+      - key: DISCORD_REDIRECT_URI
+        sync: false
+      - key: DISCORD_BOT_TOKEN
+        sync: false
+      - key: BOT_API_URL
+        sync: false
