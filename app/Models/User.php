@@ -15,7 +15,7 @@ class User extends Authenticatable
     /**
      * The table associated with the model.
      */
-    protected $table = 'web_users';
+    protected $table = 'users';
 
     /**
      * The attributes that are mass assignable.
