@@ -9,20 +9,27 @@ mkdir -p storage/logs
 mkdir -p bootstrap/cache
 chmod -R 777 storage bootstrap/cache
 
-# IMPORTANT: Delete old SQLite database and create fresh one
-echo "Creating fresh SQLite database..."
-rm -f database/database.sqlite
-touch database/database.sqlite
-chmod 777 database/database.sqlite
-
-# Clear all caches
+# Clear all caches to ensure fresh config
 echo "Clearing caches..."
 php artisan config:clear
 php artisan cache:clear
 php artisan view:clear
 php artisan route:clear
 
-# Run ALL migrations fresh (since we deleted the db)
+# Check database connection type
+echo "Database connection: ${DB_CONNECTION:-sqlite}"
+
+# Only create SQLite database if using SQLite
+if [ "${DB_CONNECTION}" = "sqlite" ] || [ -z "${DB_CONNECTION}" ]; then
+    echo "Using SQLite database..."
+    mkdir -p database
+    touch database/database.sqlite
+    chmod 777 database/database.sqlite
+else
+    echo "Using ${DB_CONNECTION} database at ${DB_HOST}..."
+fi
+
+# Run migrations
 echo "Running migrations..."
 php artisan migrate --force
 
